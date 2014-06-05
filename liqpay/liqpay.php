@@ -35,7 +35,6 @@ class Liqpay extends PaymentModule
 
 	public $liqpay_public_key = '';
 	public $liqpay_private_key = '';
-	public $liqpay_action = 'https://www.liqpay.com/api/pay';
 
     /**
      * Costructor
@@ -49,7 +48,7 @@ class Liqpay extends PaymentModule
 		$this->version = '0.1';
 		$this->author = 'Liqpay';
 		$this->need_instance = 0;
-        $params = array('LIQPAY_PUBLIC_KEY','LIQPAY_PRIVATE_KEY','LIQPAY_ACTION');
+        $params = array('LIQPAY_PUBLIC_KEY','LIQPAY_PRIVATE_KEY');
         $config = Configuration::getMultiple($params);
 		if (isset($config['LIQPAY_PUBLIC_KEY']) && $config['LIQPAY_PUBLIC_KEY']) {
 			$this->liqpay_public_key = $config['LIQPAY_PUBLIC_KEY'];
@@ -57,19 +56,13 @@ class Liqpay extends PaymentModule
 		if (isset($config['LIQPAY_PRIVATE_KEY']) && $config['LIQPAY_PRIVATE_KEY']) {
 			$this->liqpay_private_key = $config['LIQPAY_PRIVATE_KEY'];
 		}
-		if (isset($config['LIQPAY_ACTION']) && $config['LIQPAY_ACTION']) {
-			$this->liqpay_action = $config['LIQPAY_ACTION'];
-		}
 
 		parent::__construct();
         $this->page = basename(__FILE__, '.php');
         $this->displayName = 'Liqpay';
         $this->description = $this->l('Accept payments with Liqpay');
         $this->confirmUninstall = $this->l('Are you sure you want to delete your details ?');
-        $correctly =
-			!isset($this->liqpay_public_key) OR
-			!isset($this->liqpay_private_key) OR
-			!isset($this->liqpay_action);
+        $correctly = !isset($this->liqpay_public_key) OR !isset($this->liqpay_private_key);
         if ($correctly) {
         	$this->warning = $this->l('Your Liqpay account must be set correctly');
         }
@@ -108,8 +101,7 @@ class Liqpay extends PaymentModule
 		return
 			parent::uninstall() &&
 			Configuration::deleteByName('LIQPAY_PUBLIC_KEY') &&
-			Configuration::deleteByName('LIQPAY_PRIVATE_KEY') &&
-			Configuration::deleteByName('LIQPAY_ACTION');
+			Configuration::deleteByName('LIQPAY_PRIVATE_KEY');
 	}
 
 
@@ -167,19 +159,17 @@ class Liqpay extends PaymentModule
 	    if (Tools::isSubmit('submit'.$this->name)) {
 			$liqpay_public_key = strval(Tools::getValue('LIQPAY_PUBLIC_KEY'));
 			$liqpay_private_key = strval(Tools::getValue('LIQPAY_PRIVATE_KEY'));
-			$liqpay_action = strval(Tools::getValue('LIQPAY_ACTION'));
-	        if (!$liqpay_public_key  || empty($liqpay_public_key)  || !Validate::isGenericName($liqpay_public_key)  ||
-	        	!$liqpay_private_key || empty($liqpay_private_key) || !Validate::isGenericName($liqpay_private_key) ||
-	        	!$liqpay_action      || empty($liqpay_action)      || !Validate::isGenericName($liqpay_action))
-	        {
+
+            $err = !$liqpay_public_key  || empty($liqpay_public_key)  || !Validate::isGenericName($liqpay_public_key)  ||
+                   !$liqpay_private_key || empty($liqpay_private_key) || !Validate::isGenericName($liqpay_private_key);
+
+	        if ($err) {
 	            $output .= $this->displayError( $this->l('Invalid Configuration value') );
 	        } else {
 	            Configuration::updateValue('LIQPAY_PUBLIC_KEY', $liqpay_public_key);
 	            Configuration::updateValue('LIQPAY_PRIVATE_KEY', $liqpay_private_key);
-	            Configuration::updateValue('LIQPAY_ACTION', $liqpay_action);
 				$this->liqpay_public_key = $liqpay_public_key;
 				$this->liqpay_private_key = $liqpay_private_key;
-				$this->liqpay_action = $liqpay_action;
 	            $output .= $this->displayConfirmation($this->l('Settings updated'));
 	        }
 	    }
@@ -214,13 +204,6 @@ class Liqpay extends PaymentModule
 	                'size' => 20,
 	                'required' => true
 	            ),
-	            array(
-	                'type' => 'text',
-	                'label' => $this->l('Form action'),
-	                'name' => 'LIQPAY_ACTION',
-	                'size' => 20,
-	                'required' => true
-	            ),
 	        ),
 	        'submit' => array(
 	            'title' => $this->l('Save'),
@@ -252,7 +235,6 @@ class Liqpay extends PaymentModule
 	    );
 		$helper->fields_value['LIQPAY_PUBLIC_KEY'] = $this->liqpay_public_key;
 		$helper->fields_value['LIQPAY_PRIVATE_KEY'] = $this->liqpay_private_key;
-		$helper->fields_value['LIQPAY_ACTION'] = $this->liqpay_action;
 	    return $helper->generateForm($fields_form);
 	}
 }

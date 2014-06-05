@@ -23,7 +23,7 @@
 
 {l s='You will be redirected to the Liqpay website in a few seconds.' mod='liqpay'}
 
-<form id="liqpay_redirect" method="POST" action="{$action}" accept-charset="utf-8">
+<form id="liqpay_redirect" method="POST" action="https://www.liqpay.com/api/pay" accept-charset="utf-8">
     <input type="hidden" name="public_key"  value="{$public_key}" />
     <input type="hidden" name="amount"      value="{$amount}" />
     <input type="hidden" name="currency"    value="{$currency}" />
