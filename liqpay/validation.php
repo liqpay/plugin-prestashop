@@ -21,11 +21,8 @@
  * LiqPay API       https://www.liqpay.com/ru/doc
  *
  */
-
 include(dirname(__FILE__). '/../../config/config.inc.php');
 include(dirname(__FILE__).'/liqpay.php');
-
-$filename = dirname(__FILE__).'/out';
 
 $liqpay = new Liqpay();
 
@@ -57,7 +54,7 @@ $order = New Order();
 $OrderID = $order->getOrderByCartId(intval($order_id));
 if (!$OrderID) { die(); }
 $order = New Order($OrderID);
-if ($order->getCurrentState() != _PS_OS_PREPARATION_) { die(); }
+if ($order->getCurrentState() != Configuration::get('PS_OS_PREPARATION')) { die(); }
 
 $private_key = Configuration::get('LIQPAY_PRIVATE_KEY');
 
@@ -79,7 +76,12 @@ if ($insig != $gensig) { die(); }
 if ($status == 'success') {
 	$history = new OrderHistory();
 	$history->id_order = $OrderID;
-	$history->id_order_state = _PS_OS_PAYMENT_;
+	$history->id_order_state = Configuration::get('PS_OS_PAYMENT');
 	$history->add();
 	//$history->changeIdOrderState(_PS_OS_PAYMENT_, $OrderID);
+} elseif ($status == 'failure') {
+    $history = new OrderHistory();
+    $history->id_order = $OrderID;
+    $history->id_order_state = Configuration::get('PS_OS_ERROR');
+    $history->add();
 }

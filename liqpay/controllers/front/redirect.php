@@ -37,7 +37,7 @@ class liqpayredirectModuleFrontController extends ModuleFrontController
 		$cart = New Cart((int)$id_cart);
 		$liqpay = new Liqpay();
 		$total = $cart->getOrderTotal(true, 3);
-		$liqpay->validateOrder(intval($cart->id), _PS_OS_BANKWIRE_, $total, $liqpay->displayName);
+		$liqpay->validateOrder(intval($cart->id), Configuration::get('PS_OS_PREPARATION'), $total, $liqpay->displayName);
 		$currency = new Currency((int)($cart->id_currency));
 
 		$private_key = Configuration::get('LIQPAY_PRIVATE_KEY');
