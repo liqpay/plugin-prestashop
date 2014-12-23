@@ -10,7 +10,7 @@
  *
  * @category        Liqpay
  * @package         Liqpay
- * @version         0.1
+ * @version         3.0
  * @author          Liqpay
  * @copyright       Copyright (c) 2014 Liqpay
  * @license         http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -27,28 +27,18 @@ include(dirname(__FILE__).'/liqpay.php');
 $liqpay = new Liqpay();
 
 $success =
-    isset($_POST['amount']) &&
-    isset($_POST['currency']) &&
-    isset($_POST['public_key']) &&
-    isset($_POST['description']) &&
-    isset($_POST['order_id']) &&
-    isset($_POST['type']) &&
-    isset($_POST['status']) &&
-    isset($_POST['transaction_id']) &&
-    isset($_POST['sender_phone']);
+    isset($_POST['data']) &&
+    isset($_POST['signature']);
 
 if (!$success) { die(); }
 
-$amount = $_POST['amount'];
-$currency = $_POST['currency'];
-$public_key = $_POST['public_key'];
-$description = $_POST['description'];
-$order_id = $_POST['order_id'];
-$type = $_POST['type'];
-$status = $_POST['status'];
-$transaction_id = $_POST['transaction_id'];
-$sender_phone = $_POST['sender_phone'];
-$insig = $_POST['signature'];
+$data = $_POST['data'];
+$parsed_data = json_decode(base64_decode($data));
+$received_signature = $_POST['signature'];
+
+$received_public_key = $data['public_key'];
+$order_id            = $parsed_data['order_id'];
+$status              = $parsed_data['status'];
 
 $order = New Order();
 $OrderID = $order->getOrderByCartId(intval($order_id));
@@ -57,28 +47,17 @@ $order = New Order($OrderID);
 if ($order->getCurrentState() != Configuration::get('PS_OS_PREPARATION')) { die(); }
 
 $private_key = Configuration::get('LIQPAY_PRIVATE_KEY');
+$public_key  = Configuration::get('LIQPAY_PUBLIC_KEY');
 
-$gensig = base64_encode(sha1(join('',compact(
-    'private_key',
-    'amount',
-    'currency',
-    'public_key',
-    'order_id',
-    'type',
-    'description',
-    'status',
-    'transaction_id',
-    'sender_phone'
-)),1));
+$generated_signature = base64_encode(sha1($private_key.$data.$private_key, 1));
 
-if ($insig != $gensig) { die(); }
+if ($received_signature != $generated_signature || $public_key != $received_public_key) { die(); }
 
 if ($status == 'success') {
 	$history = new OrderHistory();
 	$history->id_order = $OrderID;
 	$history->id_order_state = Configuration::get('PS_OS_PAYMENT');
 	$history->add();
-	//$history->changeIdOrderState(_PS_OS_PAYMENT_, $OrderID);
 } elseif ($status == 'failure') {
     $history = new OrderHistory();
     $history->id_order = $OrderID;
