@@ -36,9 +36,9 @@ $data                = $_POST['data'];
 $parsed_data         = json_decode(base64_decode($data));
 $received_signature  = $_POST['signature'];
 
-$received_public_key = $parsed_data['public_key'];
-$order_id            = $parsed_data['order_id'];
-$status              = $parsed_data['status'];
+$received_public_key = $parsed_data->public_key;
+$order_id            = $parsed_data->order_id;
+$status              = $parsed_data->status;
 
 $order = New Order();
 $OrderID = $order->getOrderByCartId(intval($order_id));
