@@ -17,7 +17,7 @@
  * EXTENSION INFORMATION
  *
  * Prestashop       1.5.6.2
- * LiqPay API       https://www.liqpay.com/ru/doc
+ * LiqPay API       https://www.liqpay.ua/ru/doc
  *
  *}
 
