@@ -10,7 +10,7 @@
  *
  * @category        Liqpay
  * @package         Liqpay
- * @version         0.1
+ * @version         3.0
  * @author          Liqpay
  * @copyright       Copyright (c) 2014 Liqpay
  * @license         http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -18,7 +18,7 @@
  * EXTENSION INFORMATION
  *
  * Prestashop       1.5.6.2
- * LiqPay API       https://www.liqpay.com/ru/doc
+ * LiqPay API       https://www.liqpay.ua/documentation/ru
  *
  */
 
@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) { exit; }
 /**
  * Payment method liqpay form
  *
- * @author      Liqpay <support@liqpay.com>
+ * @author      Liqpay <support@liqpay.ua>
  */
 class Liqpay extends PaymentModule
 {
@@ -45,7 +45,7 @@ class Liqpay extends PaymentModule
 	{
 		$this->name = 'liqpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '0.1';
+		$this->version = '3';
 		$this->author = 'Liqpay';
 		$this->need_instance = 0;
         $params = array('LIQPAY_PUBLIC_KEY','LIQPAY_PRIVATE_KEY');

@@ -17,13 +17,13 @@
  * EXTENSION INFORMATION
  *
  * Prestashop       1.5.6.2
- * LiqPay API       https://www.liqpay.com/ru/doc
+ * LiqPay API       https://www.liqpay.ua/documentation/ru
  *
  *}
 
 {l s='You will be redirected to the Liqpay website in a few seconds.' mod='liqpay'}
 
-<form id="liqpay_redirect" method="POST" action="https://www.liqpay.com/api/checkout" accept-charset="utf-8">
+<form id="liqpay_redirect" method="POST" action="https://www.liqpay.ua/api/checkout" accept-charset="utf-8">
     <input type="hidden" name="signature"   value="{$signature}" />
     <input type="hidden" name="data"        value="{$data}" />
 </form>
