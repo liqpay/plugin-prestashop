@@ -17,3 +17,4 @@ $_MODULE['<{liqpaypayments}prestashop>liqpaypayments_3cbbfab50b44d1fd247ee69c2e5
 $_MODULE['<{liqpaypayments}prestashop>liqpaypayments_e5bbf28cceacff05896de1f4024f6c3f'] = 'Тестовий приватний ключ';
 $_MODULE['<{liqpaypayments}prestashop>liqpaypayments_c9cc8cce247e49bae79f15173ce97354'] = 'Зберегти';
 $_MODULE['<{liqpaypayments}prestashop>liqpaypayments_630f6dc397fe74e52d5189e2c80f282b'] = 'Повернутись назад';
+$_MODULE['<{liqpaypayments}prestashop>redirect_6aa70876742dcf5a331a99b15a079a3f'] = 'Оплата замовлення №';

@@ -150,16 +150,15 @@ class liqpaypaymentsredirectModuleFrontController extends ModuleFrontController
         $params = [
             'amount' => $total,
             'currency' => $currency->iso_code,
-            'description' => 'Оплата замовлення №' . $cart->id,
+            'description' => $this->l('Payment for order No.') . $cart->id,
             'language' => $liqpay_language,
             'order_id' => $order->id,
             'version' => '3',
             'action' => 'pay',
             'public_key' => $this->public_key,
-//            'server_url' => $this->context->link->getModuleLink($this->name, 'PaymentReturn', [], true),
-            'server_url' => "https://webhook.site/61c92bd2-40d8-412b-b93c-ca234667c637",
-            'callback_url' => "http://prestashop.local/"
+            'server_url' => $this->context->link->getModuleLink($this->name, 'callback', [], true)
         ];
+        
         $liqpay = new LiqPay($this->public_key, $this->private_key);
         $res = $liqpay->cnb_form_raw($params);
         
