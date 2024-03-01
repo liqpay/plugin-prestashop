@@ -156,8 +156,14 @@ class liqpaypaymentsredirectModuleFrontController extends ModuleFrontController
             'version' => '3',
             'action' => 'pay',
             'public_key' => $this->public_key,
-            'server_url' => $this->context->link->getModuleLink($this->name, 'callback', [], true)
+            'server_url' => $this->context->link->getModuleLink($this->name, 'callback', [], true),
         ];
+        
+        if (Context::getContext()->customer->isLogged()) {
+            $params['result_url'] = Context::getContext()->link->getPageLink('index') . 'order-history';
+        } else {
+            $params['result_url'] = Context::getContext()->link->getPageLink('index');
+        }
         
         $liqpay = new LiqPay($this->public_key, $this->private_key);
         $res = $liqpay->cnb_form_raw($params);
