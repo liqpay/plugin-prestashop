@@ -70,13 +70,18 @@ class liqpaypaymentsCallbackModuleFrontController extends ModuleFrontController
         $DecodedData = json_decode(base64_decode($data), true);
         $orderStatus = $DecodedData['status'] ?? null;
         
-        $validStatuses = ['success', 'wait_compensation', 'wait_reserve'];
+        $SuccessStatuses = ['success', 'wait_compensation', 'wait_reserve'];
+        $WaitStatuses = ['wait_secure', 'hold_wait'];
         
-        if (in_array($orderStatus, $validStatuses)) {
-            // Оновлення статусу замовлення у разі успішної транзакції
+        if (in_array($orderStatus, $SuccessStatuses)) {
             $this->updateOrderStatus($DecodedData['order_id'], Configuration::get('PS_OS_PAYMENT'));
+        } elseif (in_array($orderStatus, $WaitStatuses)) {
+            $this->updateOrderStatus($DecodedData['order_id'], Configuration::get('PS_OS_CHEQUE'));
+        } elseif ($orderStatus == 'wait_accept') {
+            $this->updateOrderStatus($DecodedData['order_id'], Configuration::get('PS_OS_PREPARATION'));
+        } elseif ($orderStatus == 'reversed') {
+            $this->updateOrderStatus($DecodedData['order_id'], Configuration::get('PS_OS_REFUND'));
         } else {
-            // Оновлення статусу замовлення у разі невдалої транзакції
             $this->updateOrderStatus($DecodedData['order_id'], Configuration::get('PS_OS_ERROR'));
         }
         

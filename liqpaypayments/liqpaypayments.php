@@ -10,7 +10,7 @@
  *
  * @category        Liqpay
  * @package         Liqpay
- * @version         3.0
+ * @version         3.1
  * @author          Liqpay
  * @copyright       Copyright (c) 2014 Liqpay
  * @license         http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -42,14 +42,14 @@ class LiqpayPayments extends PaymentModule
     public $author = 'Liqpay';
     public $need_instance = 0;
     
-//	public $liqpay_public_key = '';
-//	public $liqpay_private_key = '';
-//    public $liqpay_test_public_key = '';
-//    public $liqpay_test_private_key = '';
-//    public $liqpay_mode = 0;
+	public $liqpay_public_key = '';
+	public $liqpay_private_key = '';
+    public $liqpay_test_public_key = '';
+    public $liqpay_test_private_key = '';
+    public $liqpay_mode = 0;
 //
-//    protected $public_key = '';
-//    protected $private_key = '';
+    protected $public_key = '';
+    protected $private_key = '';
     
     const HOOKS = [
         'payment',
@@ -71,6 +71,19 @@ class LiqpayPayments extends PaymentModule
         $this->displayName = 'Liqpay';
         $this->description = $this->l('Accept payments with Liqpay');
         $this->confirmUninstall = $this->l('Are you sure you want to delete your details ?');
+        
+        $this->liqpay_public_key = Configuration::get('LIQPAY_PUBLIC_KEY');
+        $this->liqpay_private_key = Configuration::get('LIQPAY_PRIVATE_KEY');
+        $this->liqpay_test_public_key = Configuration::get('LIQPAY_TEST_PUBLIC_KEY');
+        $this->liqpay_test_private_key = Configuration::get('LIQPAY_TEST_PRIVATE_KEY');
+        $this->liqpay_mode = Configuration::get('LIQPAY_MODE');
+        if ($this->liqpay_mode) {
+            $this->public_key = $this->liqpay_public_key;
+            $this->private_key = $this->liqpay_private_key;
+        } else {
+            $this->public_key = $this->liqpay_test_public_key;
+            $this->private_key = $this->liqpay_test_private_key;
+        }
 	}
 
 
@@ -122,11 +135,9 @@ class LiqpayPayments extends PaymentModule
      */
 	public function hookPayment($params)
 	{
-        var_dump($params);
 		if (!$this->active) { return; }
 		if (!$this->checkCurrency($params['cart'])) { return; }
 		$currency = new Currency((int)($params['cart']->id_currency));
-        var_dump($currency);
         $this->smarty->assign(array(
             'this_path' => $this->_path,
             'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/',
@@ -256,28 +267,32 @@ class LiqpayPayments extends PaymentModule
                     'label' => $this->l('Public key'),
                     'name' => 'LIQPAY_PUBLIC_KEY',
                     'size' => 20,
-                    'required' => true
+                    'required' => true,
+                    'value' => strval(Tools::getValue('LIQPAY_PUBLIC_KEY'))
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Private key'),
                     'name' => 'LIQPAY_PRIVATE_KEY',
                     'size' => 20,
-                    'required' => true
+                    'required' => true,
+                    'value' => strval(Tools::getValue('LIQPAY_PRIVATE_KEY'))
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Test Public key'),
                     'name' => 'LIQPAY_TEST_PUBLIC_KEY',
                     'size' => 20,
-                    'required' => false
+                    'required' => false,
+                    'value' => strval(Tools::getValue('LIQPAY_TEST_PUBLIC_KEY'))
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Test Private key'),
                     'name' => 'LIQPAY_TEST_PRIVATE_KEY',
                     'size' => 20,
-                    'required' => false
+                    'required' => false,
+                    'value' => strval(Tools::getValue('LIQPAY_TEST_PRIVATE_KEY'))
                 ),
             ),
             'submit' => array(
